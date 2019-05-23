@@ -8,4 +8,11 @@
     <ProjectReference Include="..\Fetenashare.Kernel\Fetenashare.Kernel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Aggregates\" />
+    <Folder Include="Aggregates\SubjectAggregate\" />
+    <Folder Include="Aggregates\QuestionAggregate\" />
+    <Folder Include="Aggregates\InstitutionAggregate\" />
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
 </Project>
