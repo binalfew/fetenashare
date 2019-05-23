@@ -1,0 +1,38 @@
+version: '3.5'
+
+services:
+
+  sql.data:
+    image: microsoft/mssql-server-linux:2017-latest
+
+  elk:
+    image: sebp/elk
+    container_name: elk
+
+  identity.api:
+    image: ${REGISTRY:-fetenashare}/identity.api:${PLATFORM:-linux}-${TAG:-latest}
+    container_name: identity.api
+    build:
+      context: .
+      dockerfile: Fetenashare.Identity.Api/Dockerfile
+    depends_on:
+      - sql.data
+
+  catalog.api:
+    image: ${REGISTRY:-fetenashare}/catalog.api:${PLATFORM:-linux}-${TAG:-latest}
+    container_name: catalog.api
+    build:
+      context: .
+      dockerfile: Fetenashare.Catalog.Api/Dockerfile
+    depends_on:
+      - sql.data
+      - identity.api
+
+  fetenashare.web:
+    image: ${REGISTRY:-fetenashare}/fetenashare.web:${PLATFORM:-linux}-${TAG:-latest}
+    container_name: fetenashare.web
+    build:
+      context: .
+      dockerfile: Fetenashare.Web/Dockerfile
+    depends_on:
+      - catalog.api

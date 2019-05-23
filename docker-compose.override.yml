@@ -1,0 +1,43 @@
+version: '3.5'
+
+services:
+  sql.data:
+    environment:
+      - SA_PASSWORD=P@ssw0rd
+      - ACCEPT_EULA=Y
+    ports:
+      - "5433:1433"
+
+  elk:
+    ports:
+      - "5601:5601"
+      - "9200:9200"
+      - "5044:5044"
+
+  identity.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${FETENASHARE_AZURE_IDENTITY_DB:-Server=sql.data;Database=Identity;User Id=sa;Password=P@ssw0rd}
+      - LoggingConnectionString=${FETENASHARE_AZURE_LOGGING_DB:-Server=sql.data;Database=Logging;User Id=sa;Password=P@ssw0rd}
+      - WebClient=http://${FETENASHARE_EXTERNAL_DNS_NAME_OR_IP}:5100
+      - UseCustomizationData=True
+    ports:
+      - "5101:80"
+
+  catalog.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ConnectionString=${FETENASHARE_AZURE_CATALOG_DB:-Server=sql.data;Database=Catalog;User Id=sa;Password=P@ssw0rd}
+      - LoggingConnectionString=${FETENASHARE_AZURE_LOGGING_DB:-Server=sql.data;Database=Logging;User Id=sa;Password=P@ssw0rd}
+    ports:
+      - "5102:80"
+
+  fetenashare.web:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - IdentityUrl=http://identity.api
+    ports:
+      - "5100:80"
