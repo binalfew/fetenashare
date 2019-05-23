@@ -4,6 +4,7 @@ services:
 
   sql.data:
     image: microsoft/mssql-server-linux:2017-latest
+    container_name: sql
 
   elk:
     image: sebp/elk
